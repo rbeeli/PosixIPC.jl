@@ -45,6 +45,7 @@ end
 
 @testitem "free SPSCStorage aligned alloc" begin
     using PosixIPC.Queues.SPSC
+    import PosixIPC.Memory
     
     count = Memory.aligned_alloc_count()
     println("pre GC aligned_alloc_count() = ", count)

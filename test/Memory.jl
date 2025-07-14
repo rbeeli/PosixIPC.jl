@@ -1,6 +1,8 @@
 using TestItems
 
 @testitem "Basic Allocation/Deallocation" begin
+    import PosixIPC.Memory
+    
     count_start = Memory.aligned_alloc_count()
 
     # Test single allocation
@@ -12,6 +14,8 @@ using TestItems
 end
 
 @testitem "Alignment Requirements" begin
+    import PosixIPC.Memory
+
     # Test different alignments (power of 2)
     for align in [8, 16, 32, 64, 128]
         ptr = Memory.aligned_alloc(64, align)
@@ -22,6 +26,8 @@ end
 end
 
 @testitem "Thread Safety" begin
+    import PosixIPC.Memory
+
     n_threads = 4
     n_allocs_per_thread = 100
     
@@ -44,6 +50,8 @@ end
 end
 
 @testitem "Error Conditions" begin
+    import PosixIPC.Memory
+    
     # Test zero size allocation
     @test_throws ArgumentError Memory.aligned_alloc(0, 32)
     
