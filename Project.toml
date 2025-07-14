@@ -1,7 +1,7 @@
 name = "PosixIPC"
 uuid = "3c514768-3d5c-413d-aee6-5d7e94047a37"
 authors = ["Rino Beeli <40661605+rbeeli@users.noreply.github.com>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 EnumX = "4e289a0a-7415-4d19-859d-a7e5c4648b56"
