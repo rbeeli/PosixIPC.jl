@@ -110,6 +110,13 @@ mutable struct SPSCStorage
 	) where {T, FFn <: Function}
 		ptr::Ptr{UInt8} = reinterpret(Ptr{UInt8}, ptr)
 
+		if storage_size <= SPSC_BUFFER_OFFSET
+			throw(ArgumentError(
+				"SPSCStorage requires a memory region greater than $SPSC_BUFFER_OFFSET bytes, " *
+				"requested size of $storage_size bytes is too small.",
+			))
+		end
+
 		# write storage metadata to memory region
 		storage_write_metadata!(
 			SPSCStorage,
@@ -132,6 +139,13 @@ mutable struct SPSCStorage
 	SPSCStorage(storage_size::Integer) = begin
 		# allocate heap memory for storage (aligned to cache line size)
 		ptr::Ptr{UInt8} = aligned_alloc(SPSC_CACHE_LINE_SIZE, storage_size)
+
+		if storage_size <= SPSC_BUFFER_OFFSET
+			throw(ArgumentError(
+				"SPSCStorage requires a memory region greater than $SPSC_BUFFER_OFFSET bytes, " *
+				"requested size of $storage_size bytes is too small.",
+			))
+		end
 
 		# write storage metadata to memory region
 		storage_write_metadata!(
