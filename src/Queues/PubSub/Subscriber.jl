@@ -6,43 +6,43 @@ import ..SPSC
 import ..SPSC: SPSCStorage, SPSCQueueVar
 
 mutable struct Subscriber
-    config::PubSubConfig
-    shm::PosixSharedMemory
-    queue::SPSCQueueVar  # resides in shared memory
+	config::PubSubConfig
+	shm::PosixSharedMemory
+	queue::SPSCQueueVar  # resides in shared memory
 
-    function Subscriber(config::PubSubConfig, shm::PosixSharedMemory, queue::SPSCQueueVar)
-        new(config, shm, queue)
-    end
+	function Subscriber(config::PubSubConfig, shm::PosixSharedMemory, queue::SPSCQueueVar)
+		new(config, shm, queue)
+	end
 
-    function Subscriber(config::PubSubConfig)
-        if !shm_exists(config.shm_name)
-            throw(ArgumentError("Cannot create PubSub subscriber, shared memory [$(config.shm_name)] does not exist."))
-        end
+	function Subscriber(config::PubSubConfig)
+		if !shm_exists(config.shm_name)
+			throw(ArgumentError("Cannot create PubSub subscriber, shared memory [$(config.shm_name)] does not exist."))
+		end
 
-        # Open existing shared memory
-        shm = shm_open(
-            config.shm_name,
-            oflag=Base.Filesystem.JL_O_RDWR,
-            mode=0o666,
-            size=config.storage_size_bytes,
-            verbose=true
-        )
+		# Open existing shared memory
+		shm = shm_open(
+			config.shm_name,
+			oflag = Base.Filesystem.JL_O_RDWR,
+			mode = 0o666,
+			size = config.storage_size_bytes,
+			verbose = true,
+		)
 
-        # Check if size matches
-        if config.storage_size_bytes != shm.size
-            throw(ArgumentError(
-                "Shared memory [$(config.shm_name)] size mismatch, expected $(config.storage_size_bytes), got $(shm.size)."
-            ))
-        end
+		# Check if size matches
+		if config.storage_size_bytes != shm.size
+			throw(ArgumentError(
+				"Shared memory [$(config.shm_name)] size mismatch, expected $(config.storage_size_bytes), got $(shm.size).",
+			))
+		end
 
-        # Initialize queue in shared memory
-        storage = SPSCStorage(shm.ptr)
-        queue = SPSCQueueVar(storage)
+		# Initialize queue in shared memory
+		storage = SPSCStorage(shm.ptr)
+		queue = SPSCQueueVar(storage)
 
-        @info "Subscriber created using shared memory [$(config.shm_name)] with size $(shm.size) bytes."
+		@info "Subscriber created using shared memory [$(config.shm_name)] with size $(shm.size) bytes."
 
-        new(config, shm, queue)
-    end
+		new(config, shm, queue)
+	end
 end
 
 # Queue operations

@@ -25,7 +25,7 @@ end
     using PosixIPC.Queues.SPSC
 
     buffer_size = 1024 # bytes
-    shm_size = buffer_size + SPSC_STORAGE_BUFFER_OFFSET
+    shm_size = buffer_size + SPSC_BUFFER_OFFSET
 
     shm = shm_open(
         "SPSCQueue_jl_shm_unit_test",
@@ -48,8 +48,8 @@ end
     using PosixIPC.Queues
     using PosixIPC.Queues.SPSC
 
-    buffer_size = 1024 # bytes
-    shm_size = buffer_size + SPSC_STORAGE_BUFFER_OFFSET
+    buf_size = 1024 # bytes
+    shm_size = buf_size + SPSC_BUFFER_OFFSET
 
     shm = shm_open(
         "SPSCQueue_jl_shm_unit_test_reopen"
@@ -98,11 +98,9 @@ end
     @test unsafe_load(storage.read_ix, :monotonic) == 3 * (8 + 8)
     @test unsafe_load(storage.write_ix, :monotonic) == 10 * (8 + 8)
     @test storage.storage_size == shm_size
-    @test storage.buffer_size == buffer_size
+    @test buffer_size(storage) == buf_size
 
     queue = SPSCQueueVar(storage)
-    @test queue.cached_read_ix == 3 * (8 + 8)
-    @test queue.cached_write_ix == 10 * (8 + 8)
     @test can_dequeue(queue)
     @test !isempty(queue)
 

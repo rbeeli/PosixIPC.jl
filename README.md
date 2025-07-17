@@ -143,7 +143,7 @@ The `Memory` module provides helper functions to work with aligned memory.
 using PosixIPC.Memory
 
 # Allocate aligned memory block.
-aligned_alloc(size::Integer, alignment::Integer)::Ptr{Cvoid}
+aligned_alloc(alignment::Integer, size::Integer)::Ptr{Cvoid}
 
 # Free aligned memory block.
 aligned_free(ptr::Ptr{UInt8})::Nothing
@@ -247,7 +247,7 @@ using PosixIPC.SharedMemory
 using PosixIPC.Queues.SPSC
 
 buffer_size = 100_000 # bytes
-shm_size = buffer_size + SPSC_STORAGE_BUFFER_OFFSET
+shm_size = buffer_size + SPSC_BUFFER_OFFSET
 
 # works only on Linux (see test/shm.jl for details)
 shm = shm_open(

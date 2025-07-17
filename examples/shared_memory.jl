@@ -56,7 +56,7 @@ end
 
 function run()
     buffer_size = 100_000 # bytes
-    shm_size = buffer_size + SPSC_STORAGE_BUFFER_OFFSET
+    shm_size = buffer_size + SPSC_BUFFER_OFFSET
 
     shm = shm_open(
         "spscqueue_jl_shared_memory",

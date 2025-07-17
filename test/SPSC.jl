@@ -1,11 +1,16 @@
 using TestItems
 
 @testitem "init on heap memory" begin
+    using PosixIPC.Queues
     using PosixIPC.Queues.SPSC
 
     buffer_size = 1024 # bytes
     storage = SPSCStorage(buffer_size)
     queue = SPSCQueueVar(storage)
+
+    @test isempty(queue)
+    @test !can_dequeue(queue)
+    @test length(queue) == 0
 end
 
 @testitem "enqueue dequeue isempty can_dequeue" begin
@@ -18,13 +23,16 @@ end
 
     @test isempty(queue)
     @test !can_dequeue(queue)
+    @test length(queue) == 0
 
-    # enqueue
     data = [1, 2, 3, 4, 5]
     GC.@preserve data begin
+        # create message
         size_bytes = length(data) * sizeof(eltype(data))
         ptr = reinterpret(Ptr{UInt8}, pointer(data))
         msg = Message(ptr, size_bytes)
+
+        # enqueue
         enqueue!(queue, msg)
 
         @test !isempty(queue)
@@ -41,6 +49,37 @@ end
 
     @test isempty(queue)
     @test !can_dequeue(queue)
+    @test length(queue) == 0
+end
+
+@testitem "length" begin
+    using PosixIPC.Queues
+    using PosixIPC.Queues.SPSC
+
+    storage = SPSCStorage(1024)
+    queue = SPSCQueueVar(storage)
+
+    @test length(queue) == 0
+
+    data = [1]
+    GC.@preserve data begin
+        # create message
+        ptr = reinterpret(Ptr{UInt8}, pointer(data))
+        msg = Message(ptr, 8)
+
+        for i in 1:5
+            data[1] = i
+            enqueue!(queue, msg)
+            @test length(queue) == i
+        end
+
+        @test !isempty(queue)
+        @test can_dequeue(queue)
+    end
+
+    @test !isempty(queue)
+    @test can_dequeue(queue)
+    @test length(queue) == 5
 end
 
 @testitem "free SPSCStorage aligned alloc" begin
