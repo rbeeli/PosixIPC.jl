@@ -1,6 +1,18 @@
 # Changelog
 
-## v0.2.0 – 2025‑07‑17
+## [0.2.2] – 2025‑07‑19
+
+### Changed
+
+- Removed test deps from `[deps]` section in `Project.toml`
+
+## [0.2.1] – 2025‑07‑18
+
+### Added
+
+- Additional storage size sanity check in `SPSCStorage`
+
+## [0.2.0] – 2025‑07‑17
 
 ### Breaking ⚠️
 
