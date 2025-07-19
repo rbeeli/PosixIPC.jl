@@ -1,11 +1,16 @@
 name = "PosixIPC"
 uuid = "3c514768-3d5c-413d-aee6-5d7e94047a37"
 authors = ["Rino Beeli <40661605+rbeeli@users.noreply.github.com>"]
-version = "0.2.1"
+version = "0.2.2"
 
 [deps]
 EnumX = "4e289a0a-7415-4d19-859d-a7e5c4648b56"
+ThreadPinning = "811555cd-349b-4f26-b7bc-1f208b848042"
+
+[extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 TestItemRunner = "f8b46487-2199-4994-9208-9a1283c18c0a"
 TestItems = "1c621080-faea-4a02-84b6-bbd5e436b8fe"
-ThreadPinning = "811555cd-349b-4f26-b7bc-1f208b848042"
+
+[targets]
+test = ["Test", "TestItemRunner", "TestItems"]
