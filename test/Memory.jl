@@ -2,7 +2,7 @@ using TestItems
 
 @testitem "Basic Allocation/Deallocation" begin
     import PosixIPC.Memory
-    
+
     count_start = Memory.aligned_alloc_count()
 
     # Test single allocation
@@ -30,7 +30,7 @@ end
 
     n_threads = 4
     n_allocs_per_thread = 100
-    
+
     count_start = Memory.aligned_alloc_count()
 
     function worker()
@@ -45,28 +45,28 @@ end
 
     tasks = [Threads.@spawn worker() for _ in 1:n_threads]
     foreach(wait, tasks)
-    
+
     @test Memory.aligned_alloc_count() - count_start == 0
 end
 
 @testitem "Error Conditions" begin
     import PosixIPC.Memory
-    
+
     # Test zero size allocation
     @test_throws ArgumentError Memory.aligned_alloc(32, 0)
-    
+
     # Test invalid alignment (not power of 2)
     @test_throws ArgumentError Memory.aligned_alloc(33, 64)
-    
+
     # Test alignment smaller than sizeof(void*)
     @test_throws ArgumentError Memory.aligned_alloc(1, 64)
 
     # Test zero size
     @test_throws ArgumentError Memory.aligned_alloc(8, 0)
-    
+
     # Test negative size
     @test_throws ArgumentError Memory.aligned_alloc(8, -64)
-    
+
     # Test negative alignment
     @test_throws ArgumentError Memory.aligned_alloc(-8, 64)
 end

@@ -41,7 +41,7 @@ end
         # dequeue
         msg_view = dequeue_begin!(queue)
         @test msg_view.size == size_bytes
-        for i in 1:msg_view.size
+        for i in 1:(msg_view.size)
             @test unsafe_load(msg_view.data, i) == unsafe_load(ptr, i)
         end
         dequeue_commit!(queue, msg_view)
@@ -85,7 +85,7 @@ end
 @testitem "free SPSCStorage aligned alloc" begin
     using PosixIPC.Queues.SPSC
     import PosixIPC.Memory
-    
+
     count = Memory.aligned_alloc_count()
     println("pre GC aligned_alloc_count() = ", count)
     # wrap in function to ensure GC collection

@@ -14,33 +14,39 @@ Note that allocating 0 bytes will return an error.
 linux.die.net/man/3/posix_memalign
 """
 function aligned_alloc(alignment::Integer, size::Integer)::Ptr{Cvoid}
-	size > 0 || throw(ArgumentError("size must be positive, got $size"))
-	alignment > 0 || throw(ArgumentError("alignment must be positive, got $alignment"))
-	ispow2(alignment) || throw(ArgumentError("alignment must be a power of 2, got $alignment"))
-	alignment >= sizeof(Ptr{Cvoid}) || throw(ArgumentError("alignment must be at least $(sizeof(Ptr{Cvoid}))"))
+    size > 0 || throw(ArgumentError("size must be positive, got $size"))
+    alignment > 0 || throw(ArgumentError("alignment must be positive, got $alignment"))
+    ispow2(alignment) || throw(ArgumentError("alignment must be a power of 2, got $alignment"))
+    alignment >= sizeof(Ptr{Cvoid}) ||
+        throw(ArgumentError("alignment must be at least $(sizeof(Ptr{Cvoid}))"))
 
-	ptr_ref = Ref{Ptr{Cvoid}}()
-	ret = ccall(:posix_memalign, Cint,
-		(Ptr{Ptr{Cvoid}}, Csize_t, Csize_t),
-		ptr_ref, Csize_t(alignment), Csize_t(size))
+    ptr_ref = Ref{Ptr{Cvoid}}()
+    ret = ccall(
+        :posix_memalign,
+        Cint,
+        (Ptr{Ptr{Cvoid}}, Csize_t, Csize_t),
+        ptr_ref,
+        Csize_t(alignment),
+        Csize_t(size),
+    )
 
-	ret == 0 || throw(OutOfMemoryError())
+    ret == 0 || throw(OutOfMemoryError())
 
-	# Get the actual pointer
-	ptr = ptr_ref[]
+    # Get the actual pointer
+    ptr = ptr_ref[]
 
-	atomic_add!(_ALIGNED_ALLOC_COUNTER, 1)
+    atomic_add!(_ALIGNED_ALLOC_COUNTER, 1)
 
-	ptr
+    ptr
 end
 
 """
 Frees memory allocated by `aligned_alloc`.
 """
 function aligned_free(ptr::Ptr{T})::Nothing where {T}
-	ccall(:free, Cvoid, (Ptr{Cvoid},), ptr)
-	atomic_sub!(_ALIGNED_ALLOC_COUNTER, 1)
-	nothing
+    ccall(:free, Cvoid, (Ptr{Cvoid},), ptr)
+    atomic_sub!(_ALIGNED_ALLOC_COUNTER, 1)
+    nothing
 end
 
 """

@@ -8,9 +8,10 @@ using TestItems
     # create publisher
     config = PubSubConfig(
         "_unit_test_PubSub_Publisher",
-        1000,
+        1000;
         queue_full_policy=QueueFullPolicy.DROP_NEWEST,
-        log_message_drop=true)
+        log_message_drop=true,
+    )
     publisher = Publisher(config)
 
     @test publisher.config == config
@@ -30,12 +31,10 @@ end
 
     # create shared memory
     shm = shm_open(
-        "_unit_test_PubSub_Subscriber",
-        oflag=Base.Filesystem.JL_O_CREAT |
-              Base.Filesystem.JL_O_RDWR |
-              Base.Filesystem.JL_O_TRUNC,
+        "_unit_test_PubSub_Subscriber";
+        oflag=Base.Filesystem.JL_O_CREAT | Base.Filesystem.JL_O_RDWR | Base.Filesystem.JL_O_TRUNC,
         mode=0o666,
-        size=1000
+        size=1000,
     )
 
     # initialize SPSCStorage
@@ -47,10 +46,8 @@ end
 
     # create publisher
     config = PubSubConfig(
-        shm.name,
-        shm.size,
-        queue_full_policy=QueueFullPolicy.DROP_NEWEST,
-        log_message_drop=true)
+        shm.name, shm.size; queue_full_policy=QueueFullPolicy.DROP_NEWEST, log_message_drop=true
+    )
     publisher = Publisher(config)
 
     @test publisher.config == config
@@ -70,12 +67,10 @@ end
 
     # create shared memory
     shm = shm_open(
-        "_unit_test_PubSub_Subscriber",
-        oflag=Base.Filesystem.JL_O_CREAT |
-              Base.Filesystem.JL_O_RDWR |
-              Base.Filesystem.JL_O_TRUNC,
+        "_unit_test_PubSub_Subscriber";
+        oflag=Base.Filesystem.JL_O_CREAT | Base.Filesystem.JL_O_RDWR | Base.Filesystem.JL_O_TRUNC,
         mode=0o666,
-        size=1000
+        size=1000,
     )
 
     # initialize SPSCStorage
@@ -87,10 +82,8 @@ end
 
     # create subscriber
     config = PubSubConfig(
-        shm.name,
-        shm.size,
-        queue_full_policy=QueueFullPolicy.DROP_NEWEST,
-        log_message_drop=true)
+        shm.name, shm.size; queue_full_policy=QueueFullPolicy.DROP_NEWEST, log_message_drop=true
+    )
     subscriber = Subscriber(config)
 
     @test subscriber.config == config
@@ -108,10 +101,11 @@ end
 
     config = PubSubConfig(
         "_unit_test_PubSub_Publisher_Subscriber",
-        1000,
+        1000;
         queue_full_policy=QueueFullPolicy.DROP_NEWEST,
-        log_message_drop=true)
-    
+        log_message_drop=true,
+    )
+
     publisher = Publisher(config)
     subscriber = Subscriber(config)
 
@@ -151,16 +145,18 @@ end
 
     config1 = PubSubConfig(
         "_unit_test_PubSubHub1",
-        1000,
+        1000;
         queue_full_policy=QueueFullPolicy.DROP_NEWEST,
-        log_message_drop=true)
+        log_message_drop=true,
+    )
 
     config2 = PubSubConfig(
         "_unit_test_PubSubHub2",
-        1000,
+        1000;
         queue_full_policy=QueueFullPolicy.DROP_NEWEST,
-        log_message_drop=true)
-    
+        log_message_drop=true,
+    )
+
     pub_sub = PubSubHub()
     sync_configs!(pub_sub, [config1, config2])
 

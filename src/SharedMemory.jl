@@ -71,12 +71,7 @@ shm = shm_open(
 https://pubs.opengroup.org/onlinepubs/007904875/functions/shm_open.html
 """
 function shm_open(
-    name::String
-    ;
-    oflag=Base.Filesystem.JL_O_RDWR,
-    mode=0o666,
-    size=-1,
-    verbose::Bool=false
+    name::String; oflag=Base.Filesystem.JL_O_RDWR, mode=0o666, size=-1, verbose::Bool=false
 )::PosixSharedMemory
     # file descriptor
     fd_handle = @ccall shm_open(name::Cstring, oflag::Cint, mode::__mode_t)::Cint
@@ -90,7 +85,9 @@ function shm_open(
         verbose && println("Creating shared memory '$name' with size $size")
 
         if size <= 0
-            error("Shared memory '$name' size must be specified when creating with JL_O_CREAT flag.")
+            error(
+                "Shared memory '$name' size must be specified when creating with JL_O_CREAT flag."
+            )
         end
 
         # set size of shared memory region
@@ -116,7 +113,9 @@ function shm_open(
     # map shared memory region
     prot::Cint = PROT_READ | PROT_WRITE
     flags::Cint = MAP_SHARED
-    c_ptr = @ccall mmap(C_NULL::Ptr{Cvoid}, size::Csize_t, prot::Cint, flags::Cint, fd.handle::Cint, 0::__off64_t)::Ptr{Cvoid}
+    c_ptr = @ccall mmap(
+        C_NULL::Ptr{Cvoid}, size::Csize_t, prot::Cint, flags::Cint, fd.handle::Cint, 0::__off64_t
+    )::Ptr{Cvoid}
     if reinterpret(Int, c_ptr) == -1
         close(fd)
         error("Shared memory '$name' shm_open mmap failed: " * Libc.strerror(Libc.errno()))

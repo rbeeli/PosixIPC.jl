@@ -6,12 +6,10 @@ using TestItems
     @test shm_exists("NOT_EXISTING_SHM") == false
 
     shm = shm_open(
-        "for_unit_test_shm_exists",
-        oflag=Base.Filesystem.JL_O_CREAT |
-              Base.Filesystem.JL_O_RDWR |
-              Base.Filesystem.JL_O_TRUNC,
+        "for_unit_test_shm_exists";
+        oflag=Base.Filesystem.JL_O_CREAT | Base.Filesystem.JL_O_RDWR | Base.Filesystem.JL_O_TRUNC,
         mode=0o666,
-        size=32
+        size=32,
     )
 
     @test shm_exists("for_unit_test_shm_exists") == true
@@ -28,12 +26,10 @@ end
     shm_size = buffer_size + SPSC_BUFFER_OFFSET
 
     shm = shm_open(
-        "SPSCQueue_jl_shm_unit_test",
-        oflag=Base.Filesystem.JL_O_CREAT |
-              Base.Filesystem.JL_O_RDWR |
-              Base.Filesystem.JL_O_TRUNC,
+        "SPSCQueue_jl_shm_unit_test";
+        oflag=Base.Filesystem.JL_O_CREAT | Base.Filesystem.JL_O_RDWR | Base.Filesystem.JL_O_TRUNC,
         mode=0o666,
-        size=shm_size
+        size=shm_size,
     )
     storage = SPSCStorage(shm.ptr, shm.size)
     queue = SPSCQueueVar(storage)
@@ -52,14 +48,11 @@ end
     shm_size = buf_size + SPSC_BUFFER_OFFSET
 
     shm = shm_open(
-        "SPSCQueue_jl_shm_unit_test_reopen"
-        ;
-        oflag=Base.Filesystem.JL_O_CREAT |
-              Base.Filesystem.JL_O_RDWR |
-              Base.Filesystem.JL_O_TRUNC,
+        "SPSCQueue_jl_shm_unit_test_reopen";
+        oflag=Base.Filesystem.JL_O_CREAT | Base.Filesystem.JL_O_RDWR | Base.Filesystem.JL_O_TRUNC,
         mode=0o666,
         size=shm_size,
-        verbose=true
+        verbose=true,
     )
     storage = SPSCStorage(shm.ptr, shm.size)
     queue = SPSCQueueVar(storage)
@@ -86,10 +79,10 @@ end
     # reopen shared memory
     # works only on Linux (see src/shm.jl for details)
     shm = shm_open(
-        "SPSCQueue_jl_shm_unit_test_reopen",
+        "SPSCQueue_jl_shm_unit_test_reopen";
         oflag=Base.Filesystem.JL_O_RDWR,
         mode=0o666,
-        verbose=true
+        verbose=true,
     )
 
     storage = SPSCStorage(shm.ptr)

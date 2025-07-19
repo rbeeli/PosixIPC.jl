@@ -10,7 +10,10 @@
         %6 = shl nuw i64 %5, 32
         %7 = or i64 %6, %4
         ret i64 %7
-        """, UInt64, Tuple{})
+        """,
+        UInt64,
+        Tuple{},
+    )
 end
 
 """
@@ -58,8 +61,7 @@ function measure_rdtsc_cycles_per_ns()::Float64
             # busy wait
         end
         end_cycles = rdtsc()
-        measurements[i] = (end_cycles - start_cycles) /
-                          (wait_time_ns - overhead_per_call)
+        measurements[i] = (end_cycles - start_cycles) / (wait_time_ns - overhead_per_call)
     end
 
     # get median value
